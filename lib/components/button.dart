@@ -41,8 +41,8 @@ class Button extends StatelessWidget {
           text,
           style: TextStyle(
             color: Colors.white,
-            fontSize: 32,
-            fontWeight: FontWeight.w200
+            fontSize: 38,
+            fontWeight: FontWeight.w300,
           ),
         ),
         onPressed: () => callBack(text),
