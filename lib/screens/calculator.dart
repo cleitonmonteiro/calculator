@@ -32,7 +32,8 @@ class _CalculatorState extends State<Calculator> {
           Display(memory.value),
           Keyboard(_onPressed),
         ],
-      )
+      ),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
