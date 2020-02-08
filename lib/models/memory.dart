@@ -1,7 +1,6 @@
 class Memory {
   String _value = '0';
   String _operation;
-  String _lastCommand;
   int _bufferIndex = 0;
   bool _wipeValue = false;
   final _buffer = [0.0, 0.0];
@@ -24,13 +23,11 @@ class Memory {
     } else {
       _addDigit(command);
     }
-    _lastCommand = command;
   }
 
   _isReplacingOperation(String command){
-    return operations.contains(_lastCommand) 
+    return operations.contains(_operation) 
       && operations.contains(command)
-      && _lastCommand != '='
       && command != '=';
   }
   _allClear() {
@@ -50,16 +47,12 @@ class Memory {
         _operation = newOperation;
       }
     } else {
+      _operation = isEqualSign ? _operation : newOperation;
+      _buffer[1] = isEqualSign ? _buffer[1] : 0.0;
       _buffer[0] = _calculate();
-      _buffer[1] = 0.0;
-      _value = _buffer[0].toString();
-      _value = _value.endsWith('.0')
-          ? _value.split('.')[0]
-          : _value;
-      _operation = isEqualSign ? '' : newOperation;
-      _bufferIndex = isEqualSign ? 0 : 1;
+      _updateValue();
     }
-    _wipeValue = !isEqualSign;
+    _wipeValue = true;
   }
 
   _addDigit(String digit) {
@@ -69,11 +62,18 @@ class Memory {
     if (isDot && _value.contains('.') && !wipeValue) return;
 
     final emptyValue = isDot ? '0' : '';
-    final newValue = wipeValue ? emptyValue : _value;
-    _value = newValue + digit;
+    final oldValue = wipeValue ? emptyValue : _value;
+    _value = oldValue + digit;
     _wipeValue = false;
 
     _buffer[_bufferIndex] = double.tryParse(_value) ?? 0;
+  }
+
+  _updateValue() {
+    _value = _buffer[0].toString();
+    _value = _value.endsWith('.0')
+        ? _value.split('.')[0]
+        : _value;
   }
 
   _calculate() {
